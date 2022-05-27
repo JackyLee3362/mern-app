@@ -1,20 +1,33 @@
 import React, { useState, useEffect } from "react";
-import { getWebsites } from "../services/websiteService";
+import { getWebsites, deleteWebsite } from "../services/websiteService";
 import { NavLink } from "react-router-dom";
+import WebsiteTable from "./websiteTable";
+import http from "../services/httpService";
 const Website = () => {
-  let [websites, setWebsites] = useState([]);
+  const [websites, setWebsites] = useState([]);
+
   useEffect(() => {
     async function fetchData() {
       try {
         const res = await getWebsites();
         setWebsites(res.data);
-        console.log("done");
       } catch (ex) {
         console.log(ex);
       }
     }
     fetchData();
   }, []); // 需要添加空数组，避免无限循环
+  const handleDelete = async (id) => {
+    const originalWebsites = websites;
+    setWebsites(websites.filter((w) => w._id !== id));
+    try {
+      const res = await deleteWebsite(id);
+    } catch (ex) {
+      if (ex.response && ex.response.status === 404)
+        console.error("This website has already been deleted.");
+      setWebsites(originalWebsites);
+    }
+  };
   return (
     <React.Fragment>
       <div className="row">
@@ -26,9 +39,7 @@ const Website = () => {
               New Website
             </button>
           </NavLink>
-          {websites.map((w) => (
-            <p key={w.url}>{w.name}</p>
-          ))}
+          <WebsiteTable data={websites} onDelete={handleDelete} />
         </div>
       </div>
     </React.Fragment>

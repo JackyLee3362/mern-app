@@ -1,6 +1,8 @@
-import React, { useState } from "react";
-import { useParams } from "react-router-dom";
-import { saveWebsite } from "../services/websiteService";
+import React, { useState, useEffect } from "react";
+import { Link, NavLink, useNavigate, useParams } from "react-router-dom";
+import { saveWebsite, putWebsite } from "../services/websiteService";
+import { getWebsite } from "../services/websiteService";
+import Input from "./common/Input";
 const WebsiteForm = () => {
   const { id } = useParams();
   const [data, setData] = useState({
@@ -8,9 +10,23 @@ const WebsiteForm = () => {
     url: "",
   });
 
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const res = await getWebsite(id);
+        setData(res.data);
+      } catch (ex) {
+        console.log(ex);
+      }
+    }
+    if (id !== "new") {
+      fetchData();
+    }
+  }, []); // 需要添加空数组，避免无限循环
   const handleSubmit = async (e) => {
     e.preventDefault();
     await saveWebsite(data);
+    navigate("/websites");
   };
 
   const handleChange = (e) => {
@@ -22,33 +38,25 @@ const WebsiteForm = () => {
       };
     });
   };
-
+  const navigate = useNavigate();
   return (
     <React.Fragment>
-      <h1>New Movie</h1>
-      <h1>{id}</h1>
+      <h1>Movie {id}</h1>
       <div className="form-group mb-3">
         <form action="">
-          <label className="form-label" htmlFor="name">
-            name
-          </label>
-          <input
-            autoFocus
-            className="form-control"
-            type="text"
+          <Input
             name="name"
             value={data.name}
-            placeholder="输入网站名称"
+            label="网站名称"
+            type="text"
+            placeholder={data.name}
             onChange={(event) => handleChange(event)}
           />
-          <label className="form-label" htmlFor="url">
-            url
-          </label>
-          <input
-            className="form-control"
-            type="text"
+          <Input
             name="url"
-            value={data.value}
+            value={data.url}
+            label="网址"
+            type="text"
             placeholder="输入网址"
             onChange={(event) => handleChange(event)}
           />
