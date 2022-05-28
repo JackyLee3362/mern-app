@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import Table from "./common/table";
 import { Link } from "react-router-dom";
 
-export default function WebsiteTable({ data, onDelete }) {
+export default function WebsiteTable({ data, onDelete, onLike }) {
   const columns = [
     {
       path: "name",
@@ -17,22 +17,32 @@ export default function WebsiteTable({ data, onDelete }) {
       content: (website) => <a href={website.url}>{website.url}</a>,
     },
     {
-      key: "like",
-      label: "点赞",
-      content: (website) => <div onClick={() => console.log("1")}>❤️</div>,
+      path: "like",
+      label: "点赞数",
+      content: (website) => (
+        <div>
+          <button
+            key={"like" + website._id}
+            className="btn"
+            onClick={() => onLike(website)}
+          >
+            ❤️
+          </button>
+          <span>{website.like}</span>
+        </div>
+      ),
     },
     {
       key: "delete",
       label: "删除",
       content: (website) => (
         <button
-          className="btn btn-danger btn-sm"
+          className="btn btn-sm"
           onClick={() => {
-            console.log(website._id);
             onDelete(website._id);
           }}
         >
-          删除
+          🗑
         </button>
       ),
     },

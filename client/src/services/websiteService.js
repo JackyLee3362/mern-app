@@ -1,7 +1,7 @@
 import http from "./httpService";
 import _ from "lodash";
-
-const apiEndpoint = "http://192.168.1.4:3000/api/websites";
+import config from "../config.json";
+const apiEndpoint = config.apiUrl + "/websites";
 
 export function getWebsites() {
   return http.get(apiEndpoint);
@@ -15,7 +15,7 @@ export function saveWebsite(website) {
   if (website._id) {
     return http.put(
       apiEndpoint + "/" + website._id,
-      _.pick(website, ["name", "url"])
+      _.pick(website, ["name", "url", "like"])
     );
   }
   return http.post(apiEndpoint, _.pick(website, ["name", "url"]));

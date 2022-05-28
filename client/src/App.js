@@ -6,6 +6,10 @@ import "./App.css";
 
 import Website from "./components/websites";
 import WebsiteForm from "./components/websiteForm";
+import LoginForm from "./components/loginForm";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; //8.23
+import RegisterForm from "./components/registerForm";
 
 function App() {
   const routes = useRoutes([
@@ -21,9 +25,12 @@ function App() {
       path: "/websites/:id",
       element: <WebsiteForm />,
     },
+    { path: "/login", element: <LoginForm /> },
+    { path: "/register", element: <RegisterForm /> },
   ]);
   return (
     <React.Fragment>
+      <ToastContainer />
       <NavBar />
       {routes}
     </React.Fragment>

@@ -1,10 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { getWebsites, deleteWebsite } from "../services/websiteService";
+import {
+  getWebsites,
+  deleteWebsite,
+  saveWebsite,
+} from "../services/websiteService";
 import { NavLink } from "react-router-dom";
 import WebsiteTable from "./websiteTable";
-import http from "../services/httpService";
+import { toast } from "react-toastify"; // 8.25
+import _ from "lodash";
+
 const Website = () => {
   const [websites, setWebsites] = useState([]);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     async function fetchData() {
@@ -25,6 +32,24 @@ const Website = () => {
     } catch (ex) {
       if (ex.response && ex.response.status === 404)
         console.error("This website has already been deleted.");
+      toast("你不是管理员，不可以删除捏😀");
+      setWebsites(originalWebsites);
+    }
+  };
+  const handleLike = async (website) => {
+    const originalWebsites = _.cloneDeep(websites);
+
+    setWebsites(
+      websites.map((w) => {
+        if (w._id === website._id) w.like++;
+        return w;
+      })
+    );
+    console.log(originalWebsites);
+    try {
+      const res = await saveWebsite(website);
+    } catch (ex) {
+      toast("登录以后才可以点❤️哦");
       setWebsites(originalWebsites);
     }
   };
@@ -33,13 +58,17 @@ const Website = () => {
       <div className="row">
         <div className="col-2"></div>
         <div className="col">
-          <h1>Websites</h1>
+          <h1>网站收藏夹</h1>
           <NavLink to="/websites/new">
             <button className="btn btn-primary" sytle={{ marginBottom: 20 }}>
-              New Website
+              添加网站
             </button>
           </NavLink>
-          <WebsiteTable data={websites} onDelete={handleDelete} />
+          <WebsiteTable
+            data={websites}
+            onDelete={handleDelete}
+            onLike={handleLike}
+          />
         </div>
       </div>
     </React.Fragment>
