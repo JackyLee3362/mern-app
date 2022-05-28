@@ -17,6 +17,10 @@ const websiteSchema = mongoose.Schema({
     maxlength: 255,
     unique: true,
   },
+  like: {
+    type: Number,
+    default: 0,
+  },
 });
 
 // 创建模型
@@ -27,6 +31,7 @@ function validateWebsite(website) {
   const schema = Joi.object({
     name: Joi.string().min(2).required(),
     url: Joi.string().min(5).max(255).required(),
+    like: Joi.number().min(0),
   });
   return schema.validate(website);
 }

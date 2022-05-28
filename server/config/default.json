@@ -1,0 +1,7 @@
+{
+  "jwtPrivateKey": "jackyadmin",
+  "name": "Jacky MERN App",
+  "db": "mongodb://localhost/jackyapp",
+  "port": "3000",
+  "requiresAuth": true
+}
